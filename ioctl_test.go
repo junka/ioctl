@@ -42,9 +42,18 @@ func TestIoctl(t *testing.T) {
 		t.Errorf("unable to open socket file for ethtool")
 	}
 	ret := Ioctl(fd, SIOCETHTOOL, uintptr(unsafe.Pointer(&ifr)))
-	if ret != 0 {
+	if ret != nil {
 		t.Errorf("Ioctl error %v", ret)
 	}
-	t.Logf("%s info: %s\n%s\n", string(ifr.ifr_name[:]), string(drvinfo.driver[:]),
-		string(drvinfo.bus_info[:]))
+	var stats_support string
+	if drvinfo.n_stats != 0 {
+		stats_support = "yes"
+	} else {
+		stats_support = "no"
+	}
+	t.Logf("%s info: \ndriver: %s\nversion: %s\nfirmware-version: %s\n"+
+		"bus-info: %s\nsupports-statistics: %s\n",
+		string(ifr.ifr_name[:]), string(drvinfo.driver[:]),
+		string(drvinfo.version[:]), string(drvinfo.fw_version[:]),
+		string(drvinfo.bus_info[:]), stats_support)
 }
