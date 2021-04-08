@@ -86,7 +86,9 @@ func Ioctl(fd int, request uint64, arg ...uintptr) error {
 	} else if len(arg) == 4 {
 		_, _, err = syscall.Syscall6(syscall.SYS_IOCTL, uintptr(fd), uintptr(request), arg[0], arg[1], arg[2], arg[3])
 	}
-
+	if err == syscall.Errno(0) {
+		return nil
+	}
 	return err
 }
 
